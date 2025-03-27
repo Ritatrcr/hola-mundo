@@ -1,0 +1,36 @@
+name: CI/CD
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  build:
+    runs-on: windows-latest
+ 
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v2
+ 
+      - name: Configurar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+ 
+      - name: Compilar el proyecto
+        run: mvn clean install
+        shell: cmd
+ 
+      - name: Ejecutar pruebas
+        run: mvn test
+        shell: cmd
+ 
+      - name: Dar permisos a deploy.bat
+        run: git update-index --chmod=+x deploy.bat
+        shell: bash
+ 
+      - name: Ejecutar deploy.bat
+        run: .\deploy.bat
+        shell: cmd
